@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <?php
 include("authorize.php");
+echo "johnson";
 ?>
 <html lang="en">
 <head>
