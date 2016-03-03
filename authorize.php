@@ -2,11 +2,10 @@
 session_start();
 
 $error='';
-$servername = "localhost";
+$servername = "10.3.1.195";
 $username = "jonasuf171";
 $password = "7ximqa0v";
 $dbname = "jonasuf171_SecurityProject";
-$con = mysqli_connect($servername,$username,$password,$dbname);
 $dbh = new PDO('mysql:host=localhost;dbname=jonasuf171_SecurityProject', $username, $password);
 if(isset($_POST['login'])){
 
@@ -18,8 +17,8 @@ if(isset($_POST['login'])){
 
 
 
-		$user = mysqli_real_escape_string($con,$_POST['userlogin']); //mysqli_real_escape_string gebruiken we om te beveiligen tegen SQL injectie
-		$pass = mysqli_real_escape_string($con,$_POST['passlogin']);
+		$user = $_POST['userlogin']; //mysqli_real_escape_string gebruiken we om te beveiligen tegen SQL injectie
+		$pass = $_POST['passlogin'];
 
 		$userlower = strtolower($user);
 		$stmt = $dbh->prepare('SELECT * FROM users WHERE username=?');
@@ -53,12 +52,12 @@ if(isset($_POST['login'])){
 }
 if(isset($_POST['signup'] )){
 
-	$email = mysqli_real_escape_string($con,$_POST['email']);
-	$user = mysqli_real_escape_string($con,$_POST['userregister']);
-	$pass = mysqli_real_escape_string($con,$_POST['pass']);
-	$pass2 = mysqli_real_escape_string($con,$_POST['pass2']);
-	$voornaam = mysqli_real_escape_string($con,$_POST['voornaam']);
-	$achternaam = mysqli_real_escape_string($con,$_POST['achternaam']);
+	$email = $_POST['email'];
+	$user = $_POST['userregister'];
+	$pass = $_POST['pass'];
+	$pass2 = $_POST['pass2'];
+	$voornaam = $_POST['voornaam'];
+	$achternaam = $_POST['achternaam'];
 	$accepted = $_POST['accept'];
 
 
@@ -85,11 +84,9 @@ if(isset($_POST['signup'] )){
 		}else{
 
 			if($pass === $pass2){
-				if(eregi("^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$", $email)){
+				if(filter_var($email, FILTER_VALIDATE_EMAIL)){
 					$options = ['cost' => 11,'salt' => mcrypt_create_iv(22, MCRYPT_DEV_URANDOM),];
 					$hash = password_hash($pass, PASSWORD_BCRYPT, $options);
-					$insert_user = "('$userlower', '$hash','$achternaam','$voornaam','$email')";
-					$run_user = mysqli_query($con, $insert_user);
 					$stmt = $dbh->prepare("INSERT INTO users (username, passwoord, naam, voornaam, email)  VALUES (?, ?,?,?,?)");
 					$stmt->bindParam(1,$userlower);
 					$stmt->bindParam(2,$hash);
